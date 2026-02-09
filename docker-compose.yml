@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:16
+    container_name: oms_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - oms_db_data:/var/lib/postgresql/data
+      - ./src/oms/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+
+  app:
+    build: .
+    container_name: oms_app
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  oms_db_data:

@@ -4,6 +4,7 @@ from typing import Optional, Dict, Any, List
 #create Product
 #Get by ID
 #Update Product
+#Delete Product
 def create_product(
         conn, 
         sku: str, 
@@ -75,3 +76,16 @@ def update_product(conn, product_id: int, name: Optional[str], description: Opti
         row = cur.fetchone()
     conn.commit()
     return row
+
+def delete_product(conn, product_id: int) -> bool:
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            DELETE FROM products
+            WHERE id = %s
+            """,
+            (product_id,),
+        )
+        deleted = cur.rowcount > 0
+    conn.commit()
+    return deleted
