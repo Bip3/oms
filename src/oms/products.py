@@ -89,3 +89,5 @@ def delete_product(conn, product_id: int) -> bool:
         deleted = cur.rowcount > 0
     conn.commit()
     return deleted
+
+

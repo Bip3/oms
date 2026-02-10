@@ -41,17 +41,10 @@ def get_customer_by_id(conn, customer_id: int) -> Optional[Dict[str, Any]]:
         )
         return cur.fetchone()
 
-def update_customer(
-        conn,
-        customer_id: int,
-        email: Optional[str],
-        first_name: Optional[str],
-        last_name: Optional[str],
-        phone: Optional[str],
-) -> Optional[Dict[str, Any]]:
+def update_customer(conn, customer_id: int, email: Optional[str], first_name: Optional[str], last_name: Optional[str], phone: Optional[str],) -> Optional[Dict[str, Any]]:
     fields = []
     params: List[Any] = []
-
+    #Check payload for optional parameters
     if email is not None:
         fields.append("email = %s")
         params.append(email)
