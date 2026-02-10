@@ -1,22 +1,15 @@
-from typing import Optional, Dict, Any, List
-import psycopg2
-#--Methods--
-#Create Customer
-#Get Customer by ID
-#Update Customer
-#Delete Customer
+from typing import Any, Dict, List, Optional
+
+
 def create_customer(
-        conn,
-        email: str,
-        first_name: str,
-        last_name: str,
-        phone: Optional[str],
-)-> Dict[str, Any]:
-    
-    #Context manager with conn.cursor() as cur =  dont have to close
+    conn,
+    email: str,
+    first_name: str,
+    last_name: str,
+    phone: Optional[str],
+) -> Dict[str, Any]:
     with conn.cursor() as cur:
         cur.execute(
-            #%s to prevent sql injections
             """
             INSERT INTO customers (email, first_name, last_name, phone)
             VALUES (%s, %s, %s, %s)
@@ -28,6 +21,7 @@ def create_customer(
 
     conn.commit()
     return row
+
 
 def get_customer_by_id(conn, customer_id: int) -> Optional[Dict[str, Any]]:
     with conn.cursor() as cur:
@@ -41,10 +35,18 @@ def get_customer_by_id(conn, customer_id: int) -> Optional[Dict[str, Any]]:
         )
         return cur.fetchone()
 
-def update_customer(conn, customer_id: int, email: Optional[str], first_name: Optional[str], last_name: Optional[str], phone: Optional[str],) -> Optional[Dict[str, Any]]:
+
+def update_customer(
+    conn,
+    customer_id: int,
+    email: Optional[str],
+    first_name: Optional[str],
+    last_name: Optional[str],
+    phone: Optional[str],
+) -> Optional[Dict[str, Any]]:
     fields = []
     params: List[Any] = []
-    #Check payload for optional parameters
+
     if email is not None:
         fields.append("email = %s")
         params.append(email)
@@ -75,6 +77,7 @@ def update_customer(conn, customer_id: int, email: Optional[str], first_name: Op
         row = cur.fetchone()
     conn.commit()
     return row
+
 
 def delete_customer(conn, customer_id: int) -> bool:
     with conn.cursor() as cur:

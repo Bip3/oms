@@ -10,15 +10,41 @@ services:
       - "5432:5432"
     volumes:
       - oms_db_data:/var/lib/postgresql/data
-      - ./src/oms/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+      - ./shared/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
 
-  app:
-    build: .
-    container_name: oms_app
+  customers:
+    build:
+      context: .
+      dockerfile: services/customers/Dockerfile
+    container_name: oms_customers
     environment:
       DATABASE_URL: ${DATABASE_URL}
     ports:
-      - "8000:8000"
+      - "8001:8001"
+    depends_on:
+      - db
+
+  products:
+    build:
+      context: .
+      dockerfile: services/products/Dockerfile
+    container_name: oms_products
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    ports:
+      - "8002:8002"
+    depends_on:
+      - db
+
+  orders:
+    build:
+      context: .
+      dockerfile: services/orders/Dockerfile
+    container_name: oms_orders
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    ports:
+      - "8003:8003"
     depends_on:
       - db
 

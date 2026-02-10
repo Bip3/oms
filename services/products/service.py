@@ -1,18 +1,15 @@
-from typing import Optional, Dict, Any, List
+from typing import Any, Dict, List, Optional
 
-#--Methods--
-#create Product
-#Get by ID
-#Update Product
-#Delete Product
+
 def create_product(
-        conn, 
-        sku: str, 
-        name: str, 
-        description: Optional[str], 
-        price_cents: int, 
-        stock_quantity: int, 
-        is_active: bool) -> Dict[str, Any]:
+    conn,
+    sku: str,
+    name: str,
+    description: Optional[str],
+    price_cents: int,
+    stock_quantity: int,
+    is_active: bool,
+) -> Dict[str, Any]:
     with conn.cursor() as cur:
         cur.execute(
             """
@@ -20,11 +17,12 @@ def create_product(
             VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING id, sku, name, description, price_cents, stock_quantity, is_active, created_at, updated_at
             """,
-            (sku, name, description, price_cents, stock_quantity, is_active)
+            (sku, name, description, price_cents, stock_quantity, is_active),
         )
         row = cur.fetchone()
     conn.commit()
     return row
+
 
 def get_product_by_id(conn, product_id: int) -> Optional[Dict[str, Any]]:
     with conn.cursor() as cur:
@@ -37,9 +35,17 @@ def get_product_by_id(conn, product_id: int) -> Optional[Dict[str, Any]]:
             (product_id,),
         )
         return cur.fetchone()
-def update_product(conn, product_id: int, name: Optional[str], description: Optional[str], price_cents: Optional[int], stock_quantity: Optional[int], is_active: Optional[bool]) -> Optional[Dict[str, Any]]:
-    #Using optional fields to handle the update. Checking for each field that user has given, then setting in db
-    #And updating updated_at for accurate timestamps
+
+
+def update_product(
+    conn,
+    product_id: int,
+    name: Optional[str],
+    description: Optional[str],
+    price_cents: Optional[int],
+    stock_quantity: Optional[int],
+    is_active: Optional[bool],
+) -> Optional[Dict[str, Any]]:
     fields = []
     params: List[Any] = []
 
@@ -77,6 +83,7 @@ def update_product(conn, product_id: int, name: Optional[str], description: Opti
     conn.commit()
     return row
 
+
 def delete_product(conn, product_id: int) -> bool:
     with conn.cursor() as cur:
         cur.execute(
@@ -89,5 +96,3 @@ def delete_product(conn, product_id: int) -> bool:
         deleted = cur.rowcount > 0
     conn.commit()
     return deleted
-
-

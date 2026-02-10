@@ -1,4 +1,4 @@
--- Customers (already have)
+-- Customers 
 CREATE TABLE IF NOT EXISTS customers (
   id         BIGSERIAL PRIMARY KEY,
   email      TEXT NOT NULL UNIQUE,
