@@ -83,3 +83,58 @@ pytest
 - Customers: `http://localhost:8001`
 - Products: `http://localhost:8002`
 - Orders/Reports: `http://localhost:8003`
+
+## API (Endpoints + Schemas)
+
+Live OpenAPI/Swagger:
+- Customers: `http://localhost:8001/docs` (`/openapi.json`)
+- Products: `http://localhost:8002/docs` (`/openapi.json`)
+- Orders/Reports: `http://localhost:8003/docs` (`/openapi.json`)
+
+### Customers Service
+
+Endpoints:
+- `POST /customers` -> `CustomerOut` (201) | body: `CustomerCreate`
+- `GET /customers/{customer_id}` -> `CustomerOut`
+- `PUT /customers/{customer_id}` -> `CustomerOut` | body: `CustomerUpdate`
+- `DELETE /customers/{customer_id}` -> (204)
+
+Schemas:
+- `CustomerCreate`: `email`, `first_name`, `last_name`, `phone?`
+- `CustomerUpdate`: `email?`, `first_name?`, `last_name?`, `phone?`
+- `CustomerOut`: `id`, `email`, `first_name`, `last_name`, `phone?`, `created_at`, `updated_at`
+
+### Products Service
+
+Endpoints:
+- `POST /products` -> `ProductOut` (201) | body: `ProductCreate`
+- `GET /products/{product_id}` -> `ProductOut`
+- `PUT /products/{product_id}` -> `ProductOut` | body: `ProductUpdate`
+- `DELETE /products/{product_id}` -> (204)
+
+Schemas:
+- `ProductCreate`: `sku`, `name`, `description?`, `price_cents`, `stock_quantity`, `is_active`
+- `ProductUpdate`: `name?`, `description?`, `price_cents?`, `stock_quantity?`, `is_active?`
+- `ProductOut`: `id`, `sku`, `name`, `description?`, `price_cents`, `stock_quantity`, `is_active`, `created_at`, `updated_at`
+
+### Orders/Reports Service
+
+Endpoints:
+- `POST /orders` -> `OrderOut` (201) | body: `OrderCreate`
+- `GET /orders/{order_id}` -> `OrderOut`
+- `PUT /orders/{order_id}` -> `OrderOut` | body: `OrderUpdate`
+- `PATCH /orders/{order_id}/status` -> `OrderOut` | body: `OrderStatusUpdate`
+- `DELETE /orders/{order_id}` -> (204)
+- `GET /customers/{customer_id}/orders` -> `[OrderSummaryOut]`
+- `GET /orders?start=...&end=...` -> `[OrderSummaryOut]`
+- `GET /reports/top-products?start=...&end=...&limit=10` -> `[TopProductOut]`
+
+Schemas:
+- `OrderItemIn`: `product_id`, `quantity`
+- `OrderCreate`: `customer_id`, `items` (`OrderItemIn[]`)
+- `OrderUpdate`: `items` (`OrderItemIn[]`)
+- `OrderStatusUpdate`: `status`
+- `OrderItemOut`: `product_id`, `quantity`, `unit_price_cents`, `line_total_cents`
+- `OrderOut`: `id`, `customer_id`, `status`, `total_cents`, `items` (`OrderItemOut[]`), `created_at`, `updated_at`
+- `OrderSummaryOut`: `id`, `customer_id`, `status`, `total_cents`, `created_at`, `updated_at`
+- `TopProductOut`: `product_id`, `sku`, `name`, `total_quantity`, `total_sales_cents`
